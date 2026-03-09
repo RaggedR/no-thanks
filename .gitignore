@@ -1,0 +1,7 @@
+node_modules/
+dist/
+client/dist/
+*.tsbuildinfo
+.env
+tmp/
+CLAUDE_DOCS/

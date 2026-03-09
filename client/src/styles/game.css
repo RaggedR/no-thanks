@@ -1,0 +1,547 @@
+/* ─── Reset & Base ───────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #1a3a1a;
+  color: #e8e8e8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Menu ───────────────────────────────────── */
+.menu {
+  text-align: center;
+  padding: 2rem;
+  max-width: 500px;
+}
+
+.menu h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 0.25rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.rules {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 2rem;
+}
+
+.rules h3 {
+  color: #ffd700;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.rules ul {
+  list-style: none;
+  padding: 0;
+}
+
+.rules li {
+  padding: 0.35rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.rules li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #ffd700;
+}
+
+/* ─── Buttons ────────────────────────────────── */
+.btn {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-large {
+  padding: 1rem 3rem;
+  font-size: 1.25rem;
+}
+
+.btn-primary {
+  background: #ffd700;
+  color: #1a3a1a;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #ffed4a;
+  transform: translateY(-1px);
+}
+
+.btn-pass {
+  background: #c0392b;
+  color: white;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  min-width: 150px;
+}
+
+.btn-pass:hover:not(:disabled) {
+  background: #e74c3c;
+  transform: translateY(-1px);
+}
+
+.btn-take {
+  background: #27ae60;
+  color: white;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  min-width: 150px;
+}
+
+.btn-take:hover:not(:disabled) {
+  background: #2ecc71;
+  transform: translateY(-1px);
+}
+
+.btn-hint {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+/* ─── Chip Tokens ────────────────────────────── */
+.chip-token {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffe566, #ffd700 40%, #b8960f 100%);
+  border: 2px solid #b8960f;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.chip-hidden {
+  background: radial-gradient(circle at 40% 35%, #888, #666 40%, #444 100%);
+  border-color: #444;
+}
+
+.chip-pile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-stack, .chip-stack-hidden {
+  display: flex;
+  align-items: center;
+}
+
+.chip-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ddd;
+  min-width: 1.5rem;
+}
+
+.chip-pile-hidden .chip-label {
+  color: #888;
+}
+
+/* ─── Chips On Card ──────────────────────────── */
+.chips-on-card-pile {
+  position: relative;
+  height: 32px;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip-on-card {
+  width: 20px;
+  height: 20px;
+}
+
+.chips-on-card-count {
+  position: relative;
+  z-index: 10;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  margin-left: 4px;
+}
+
+/* ─── Animation Overlay ──────────────────────── */
+.animation-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.flying-chip {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.flying-card {
+  transform: scale(0.9);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+/* ─── Game Board ─────────────────────────────── */
+.game-board {
+  width: 100%;
+  max-width: 800px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0;
+}
+
+/* ─── Opponents Row ──────────────────────────── */
+.opponents-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.opponent-zone {
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.opponent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.opponent-name {
+  font-weight: 600;
+  color: #ddd;
+  font-size: 0.9rem;
+}
+
+.opponent-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  min-height: 36px;
+  align-items: center;
+}
+
+/* ─── Center Area ────────────────────────────── */
+.center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+.action-message {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease;
+  text-align: center;
+}
+
+.current-card-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.no-card {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.waiting {
+  color: #888;
+  font-size: 0.9rem;
+  animation: pulse 1.5s infinite;
+}
+
+/* ─── Player Area ────────────────────────────── */
+.player-area {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.player-hand {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.hand-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.score {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.hand-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 42px;
+}
+
+.no-cards {
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* ─── Runs ───────────────────────────────────── */
+.run {
+  display: flex;
+  gap: 2px;
+}
+
+.run-grouped {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+/* ─── Cards ──────────────────────────────────── */
+.card {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+
+.card-small {
+  width: 36px;
+  height: 48px;
+  font-size: 0.85rem;
+}
+
+.card-large {
+  width: 90px;
+  height: 120px;
+  font-size: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.card-highlighted {
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+/* ─── Game Over ──────────────────────────────── */
+.game-over {
+  text-align: center;
+  padding: 2rem;
+  max-width: 500px;
+}
+
+.game-over h1 {
+  font-size: 2.5rem;
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.winner-banner {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.you-won {
+  background: rgba(39, 174, 96, 0.3);
+  color: #2ecc71;
+  border: 2px solid #27ae60;
+}
+
+.you-lost {
+  background: rgba(192, 57, 43, 0.3);
+  color: #e74c3c;
+  border: 2px solid #c0392b;
+}
+
+.final-scores {
+  margin-bottom: 2rem;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.score-you {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.score-row .rank {
+  font-weight: 700;
+  color: #ffd700;
+  min-width: 2rem;
+}
+
+.score-row .name {
+  flex: 1;
+  text-align: left;
+}
+
+.score-row .score {
+  font-weight: 600;
+}
+
+/* ─── Error ──────────────────────────────────── */
+.error {
+  background: rgba(192, 57, 43, 0.3);
+  color: #e74c3c;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* ─── Animations ─────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ─── Responsive ─────────────────────────────── */
+@media (max-width: 600px) {
+  .game-board {
+    padding: 0.5rem;
+  }
+
+  .opponents-row {
+    gap: 0.5rem;
+  }
+
+  .opponent-zone {
+    min-width: 150px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .card-large {
+    width: 72px;
+    height: 96px;
+    font-size: 1.6rem;
+  }
+
+  .card-small {
+    width: 30px;
+    height: 40px;
+    font-size: 0.75rem;
+  }
+
+  .chip-token {
+    width: 20px;
+    height: 20px;
+  }
+
+  .action-buttons {
+    gap: 0.75rem;
+  }
+
+  .btn-pass, .btn-take {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    min-width: 120px;
+  }
+
+  .menu h1 {
+    font-size: 2.25rem;
+  }
+
+  .game-over h1 {
+    font-size: 2rem;
+  }
+}

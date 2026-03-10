@@ -1,31 +1,26 @@
 {
   "name": "no-thanks",
-  "version": "1.0.0",
-  "description": "No Thanks! card game with AI opponents",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "No Thanks! card game with AI opponents — runs entirely in the browser",
   "scripts": {
-    "build:server": "tsc",
-    "build:client": "cd client && npm run build",
-    "build": "npm run build:server && npm run build:client",
-    "start": "node dist/server/index.js",
-    "dev:server": "tsx watch src/server/index.ts",
-    "dev:client": "cd client && npm run dev",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "train": "tsx src/ai/train.ts",
     "test": "vitest run"
   },
   "dependencies": {
-    "cookie-parser": "^1.4.7",
-    "express": "^4.21.0",
-    "uuid": "^11.0.0"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.7",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.0.0",
-    "@types/uuid": "^10.0.0",
-    "concurrently": "^9.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
+    "vite": "^5.4.0",
     "vitest": "^2.1.0"
   }
 }

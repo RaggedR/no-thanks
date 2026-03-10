@@ -1,18 +1,18 @@
 # No Thanks! — AI Card Game
 
-A web implementation of the card game **No Thanks!** where you play against two AI opponents trained through evolutionary self-play. The AI learns optimal strategy by playing millions of games against itself.
+A web implementation of the card game **No Thanks!** where you play against two AI opponents trained through evolutionary self-play. The AI learns optimal strategy by playing millions of games against itself. Runs entirely in the browser — no server needed.
 
-**Play now:** https://no-thanks-954510692982.australia-southeast1.run.app
+**Play now:** https://raggedr.github.io/no-thanks/
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Runtime** | Node.js + TypeScript |
-| **Backend** | Express (API routes + serves static build) |
+| **Runtime** | Browser (TypeScript) |
 | **Frontend** | React + Vite |
-| **AI Training** | Evolutionary algorithm (runs locally, outputs JSON weights) |
-| **Deployment** | Google Cloud Run (single container) |
+| **Game Logic** | Pure TypeScript functions running client-side |
+| **AI Training** | Evolutionary algorithm (runs locally via Node.js, outputs weights) |
+| **Deployment** | GitHub Pages (static site) |
 
 ## How the AI Works
 
@@ -74,18 +74,18 @@ npx tsx src/ai/train.ts
 # Training logs fitness per generation + periodic validation vs random
 ```
 
-The generated `weights.json` is committed to the repo and baked into the Docker image at build time. The deployed server loads it once at startup.
+The generated `weights.json` is committed to the repo. After retraining, copy the 13 numbers into `src/weights.ts`.
 
 ## State Management
 
-The server is the **single source of truth**. The client never has access to hidden information.
+The game state lives entirely in the browser. A `useRef<GameState>` in React holds the full internal state, while the rendered UI sees only a projected `ClientView`.
 
-### What the server knows (full state)
+### What the game state holds (full state)
 - All players' cards and exact chip counts
 - The deck order (remaining face-down cards)
 - Which 9 cards were removed at setup
 
-### What the client sees (sanitized view)
+### What the UI sees (projected view)
 - The human player's own cards, chips, and score
 - AI opponents' cards (visible, as in the physical game)
 - AI opponents' chip counts: **hidden** (shown as "???")
@@ -94,17 +94,17 @@ The server is the **single source of truth**. The client never has access to hid
 
 ### Turn flow
 
-When the human submits an action, the server:
+When the human submits an action, the game controller:
 1. Applies the human's action (take or pass)
 2. Runs all subsequent AI turns until it's the human's turn again
 3. Returns the updated client view + an **action log**
 
-The client then **animates through the action log** with timed delays (brief "thinking..." pauses for each AI), giving the feel of playing against real opponents. Buttons are disabled during AI turns.
+The UI then **animates through the action log** with timed delays (brief "thinking..." pauses for each AI), giving the feel of playing against real opponents. Buttons are disabled during AI turns.
 
 This means:
-- **One HTTP request per human decision** — simple networking
-- **No WebSockets needed** — the action log replay creates the illusion of real-time
-- **No cheating possible** — hidden state never leaves the server
+- **Zero network requests during gameplay** — everything runs locally
+- **Instant responses** — no latency, no loading spinners
+- **Works offline** — once loaded, no internet connection needed
 
 ## Game Rules
 
@@ -121,35 +121,22 @@ This means:
 ```bash
 # Install dependencies
 npm install
-cd client && npm install && cd ..
 
-# Start dev server (Express API + Vite dev server with proxy)
+# Start dev server (Vite with HMR)
 npm run dev
 
 # Build for production
 npm run build
 
-# Start production server
-npm start
+# Preview production build
+npm run preview
+
+# Run tests
+npm test
 ```
 
-## Deployment (Cloud Run)
+## Deployment (GitHub Pages)
 
-The app deploys as a single Docker container: Express serves both the API and the built React frontend.
+Push to `main` and GitHub Actions automatically builds and deploys to GitHub Pages.
 
-```bash
-# Build and deploy to Cloud Run
-gcloud run deploy no-thanks --source . --region australia-southeast1 --allow-unauthenticated
-
-# That's it — Cloud Run builds the Dockerfile, pushes to Artifact Registry, and deploys.
-# You get a URL like: https://no-thanks-xxxxx-uc.a.run.app
-```
-
-The Dockerfile uses a multi-stage build:
-1. **Stage 1**: Build the React client (`npm run build` → `client/dist/`)
-2. **Stage 2**: Compile the TypeScript server (`tsc`)
-3. **Stage 3**: Slim Node.js runtime image, serves API + static files
-
-### Environment
-
-No environment variables or secrets needed. The trained weights are bundled in the image. The app is entirely self-contained.
+No environment variables or secrets needed. The trained weights are hardcoded in `src/weights.ts`. The app is entirely self-contained.

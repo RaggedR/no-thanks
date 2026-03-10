@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
+import { GameState } from './engine/types'
 import { ClientView, ActionLogEntry, FlyingElement } from './types'
+import { newGame, humanAction } from './game-controller'
 import GameBoard, { GameBoardHandle } from './components/GameBoard'
 import GameOver from './components/GameOver'
 
@@ -12,10 +14,10 @@ export default function App() {
   const [gameState, setGameState] = useState<ClientView | null>(null)
   const [message, setMessage] = useState<string>('')
   const [animating, setAnimating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [flyingElements, setFlyingElements] = useState<FlyingElement[]>([])
   const animationRef = useRef(false)
   const boardRef = useRef<GameBoardHandle>(null)
+  const gameStateRef = useRef<GameState | null>(null)
 
   type Zone = 'center' | 'player-chips' | 'player-cards' | 'opp1-chips' | 'opp1-cards' | 'opp2-chips' | 'opp2-cards'
 
@@ -97,27 +99,21 @@ export default function App() {
     await Promise.all(promises)
   }, [animateChip])
 
-  const startNewGame = useCallback(async () => {
-    try {
-      setError(null)
-      setFlyingElements([])
-      const res = await fetch('/api/game/new', { method: 'POST' })
-      const data: ClientView = await res.json()
-      setGameState(data)
-      setPhase('playing')
-      setMessage('')
+  const startNewGame = useCallback(() => {
+    setFlyingElements([])
+    const result = newGame()
+    gameStateRef.current = result.state
+    setGameState(result.view)
+    setPhase('playing')
+    setMessage('')
 
-      if (data.actionLog.length > 0) {
-        await replayActions(data.actionLog, data)
-      }
-    } catch {
-      setError('Failed to start game. Is the server running?')
+    if (result.view.actionLog.length > 0) {
+      replayActions(result.view.actionLog, result.view)
     }
   }, [])
 
   const submitAction = useCallback(async (action: 'take' | 'pass') => {
-    if (animating || !gameState) return
-    setError(null)
+    if (animating || !gameState || !gameStateRef.current) return
 
     const prevScore = gameState.you.score
 
@@ -146,45 +142,27 @@ export default function App() {
       }
     }
 
-    try {
-      const res = await fetch('/api/game/action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action }),
-      })
-      const data: ClientView = await res.json()
+    const result = humanAction(gameStateRef.current, action)
+    gameStateRef.current = result.state
+    const data = result.view
 
-      if (!res.ok) {
-        setError((data as unknown as { error: string }).error)
-        animationRef.current = false
-        setAnimating(false)
-        return
-      }
-
-      // Show score delta feedback when human takes a card
-      if (action === 'take') {
-        const scoreDelta = data.you.score - prevScore
-        if (scoreDelta === 0) {
-          setMessage('Extends run!')
-        } else {
-          setMessage(`+${scoreDelta} pts`)
-        }
-        // Clear the message after a brief display
-        setTimeout(() => setMessage(''), 1200)
-      }
-
-      if (data.actionLog.length > 0) {
-        // Apply the state before AI turns (human action result)
-        // Then replay AI actions
-        await replayActions(data.actionLog, data)
+    // Show score delta feedback when human takes a card
+    if (action === 'take') {
+      const scoreDelta = data.you.score - prevScore
+      if (scoreDelta === 0) {
+        setMessage('Extends run!')
       } else {
-        setGameState(data)
-        if (data.phase === 'finished') setPhase('finished')
-        animationRef.current = false
-        setAnimating(false)
+        setMessage(`+${scoreDelta} pts`)
       }
-    } catch {
-      setError('Failed to send action.')
+      // Clear the message after a brief display
+      setTimeout(() => setMessage(''), 1200)
+    }
+
+    if (data.actionLog.length > 0) {
+      await replayActions(data.actionLog, data)
+    } else {
+      setGameState(data)
+      if (data.phase === 'finished') setPhase('finished')
       animationRef.current = false
       setAnimating(false)
     }
@@ -260,7 +238,7 @@ export default function App() {
       }
     }
 
-    // Apply final server state
+    // Apply final state
     setGameState(finalState)
     setMessage('')
     if (finalState.phase === 'finished') setPhase('finished')
@@ -288,7 +266,6 @@ export default function App() {
               <li><strong>Lowest score wins!</strong></li>
             </ul>
           </div>
-          {error && <div className="error">{error}</div>}
         </div>
       </div>
     )
@@ -314,7 +291,6 @@ export default function App() {
           flyingElements={flyingElements}
         />
       )}
-      {error && <div className="error">{error}</div>}
     </div>
   )
 }

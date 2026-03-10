@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { createGame, getValidActions, applyAction, isGameOver } from './game';
-import { GameState } from './types';
 
 describe('createGame', () => {
   it('creates game with correct number of players', () => {

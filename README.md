@@ -2,6 +2,8 @@
 
 A web implementation of the card game **No Thanks!** where you play against two AI opponents trained through evolutionary self-play. The AI learns optimal strategy by playing millions of games against itself.
 
+**Play now:** https://no-thanks-954510692982.australia-southeast1.run.app
+
 ## Tech Stack
 
 | Layer | Technology |

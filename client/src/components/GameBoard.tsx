@@ -69,18 +69,18 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
                   <div key={el.id} className="chip-token flying-chip" style={style} />
                 )
               } else {
+                // Flying card matches the new white card + ring design
                 const t = ((el.cardValue ?? 20) - 3) / 32
                 const hue = 120 - t * 120
                 return (
                   <div
                     key={el.id}
                     className="card card-small flying-card"
-                    style={{
-                      ...style,
-                      backgroundColor: `hsl(${hue}, 70%, 40%)`,
-                    }}
+                    style={style}
                   >
-                    <span className="card-value">{el.cardValue}</span>
+                    <span className="card-ring" style={{ borderColor: `hsl(${hue}, 60%, 50%)` }}>
+                      <span className="card-value">{el.cardValue}</span>
+                    </span>
                   </div>
                 )
               }
@@ -100,7 +100,7 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
           ))}
         </div>
 
-        {/* Center: current card + chips */}
+        {/* Center: current card + chips only (no buttons) */}
         <div className="center-area">
           {message && <div className="action-message">{message}</div>}
 
@@ -120,37 +120,13 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
                       }}
                     />
                   ))}
-                  <span className="chips-on-card-count">+{chipsOnCardTokens}</span>
+                  {/* chip tokens speak for themselves — no count label */}
                 </div>
               )}
             </div>
           ) : (
             <div className="no-card" ref={centerRef}>No card</div>
           )}
-
-          {/* Action buttons */}
-          <div className="action-buttons">
-            <button
-              className="btn btn-pass"
-              disabled={!buttonsEnabled || !canPass}
-              onClick={() => onAction('pass')}
-            >
-              No Thanks!
-              {buttonsEnabled && canPass && (
-                <span className="btn-hint">−1 chip</span>
-              )}
-            </button>
-            <button
-              className="btn btn-take"
-              disabled={!buttonsEnabled || !canTake}
-              onClick={() => onAction('take')}
-            >
-              Take It
-              {buttonsEnabled && canTake && state.chipsOnCard > 0 && (
-                <span className="btn-hint">+{state.chipsOnCard} chips</span>
-              )}
-            </button>
-          </div>
 
           {!state.isYourTurn && !animating && state.phase === 'playing' && (
             <div className="waiting">Waiting for opponents...</div>
@@ -165,7 +141,32 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
             score={state.you.score}
             chipRef={playerChipsRef}
             cardsRef={playerCardsRef}
+            isYourTurn={state.isYourTurn}
           />
+        </div>
+
+        {/* Round action buttons below player area */}
+        <div className="action-buttons-bottom">
+          <button
+            className="btn btn-pass"
+            disabled={!buttonsEnabled || !canPass}
+            onClick={() => onAction('pass')}
+          >
+            Pass
+            {buttonsEnabled && canPass && (
+              <span className="btn-hint">&minus;1 chip</span>
+            )}
+          </button>
+          <button
+            className="btn btn-take"
+            disabled={!buttonsEnabled || !canTake}
+            onClick={() => onAction('take')}
+          >
+            Take
+            {buttonsEnabled && canTake && state.chipsOnCard > 0 && (
+              <span className="btn-hint">+{state.chipsOnCard} chips</span>
+            )}
+          </button>
         </div>
       </div>
     )

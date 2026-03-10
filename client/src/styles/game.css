@@ -7,17 +7,32 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #1a3a1a;
+  background: radial-gradient(ellipse at 50% 40%, #1a2d42 0%, #152536 50%, #0f1923 100%);
   color: #e8e8e8;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
+/* Felt grain texture via SVG feTurbulence noise */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.10;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
 #root {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
 }
 
 .app {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -33,11 +48,18 @@ body {
 }
 
 .menu h1 {
-  font-size: 3rem;
+  font-family: 'Teko', sans-serif;
+  font-size: 4.5rem;
   font-weight: 700;
-  color: #ffd700;
+  line-height: 1;
+  color: #e8a862;
   margin-bottom: 0.25rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(232, 168, 98, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .subtitle {
@@ -49,13 +71,16 @@ body {
 .rules {
   text-align: left;
   background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   margin-top: 2rem;
 }
 
 .rules h3 {
-  color: #ffd700;
+  color: #e8a862;
   margin-bottom: 0.75rem;
   font-size: 1rem;
 }
@@ -74,16 +99,15 @@ body {
 }
 
 .rules li::before {
-  content: '→';
+  content: '\2192';
   position: absolute;
   left: 0;
-  color: #ffd700;
+  color: #e8a862;
 }
 
 /* ─── Buttons ────────────────────────────────── */
 .btn {
   border: none;
-  border-radius: 10px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 600;
@@ -102,48 +126,86 @@ body {
 .btn-large {
   padding: 1rem 3rem;
   font-size: 1.25rem;
+  border-radius: 10px;
 }
 
 .btn-primary {
-  background: #ffd700;
-  color: #1a3a1a;
+  background: linear-gradient(to bottom, #f0be6e, #e8a862);
+  color: #1a2d42;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #ffed4a;
+  background: linear-gradient(to bottom, #f5cc85, #f0be6e);
   transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Round action buttons — shared layout */
+.btn-pass, .btn-take {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  color: white;
+  position: relative;
+  justify-content: center;
+  gap: 0;
 }
 
 .btn-pass {
-  background: #c0392b;
-  color: white;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  min-width: 150px;
+  background: radial-gradient(circle at 40% 35%, #f07a6a, #e85d4a 50%, #c44a3a 100%);
+  box-shadow:
+    0 3px 6px hsl(220deg 40% 10% / 0.5),
+    0 6px 12px hsl(220deg 40% 10% / 0.25),
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.15);
 }
 
 .btn-pass:hover:not(:disabled) {
-  background: #e74c3c;
-  transform: translateY(-1px);
+  background: radial-gradient(circle at 40% 35%, #f8897a, #f06e5d 50%, #d45545 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 5px 10px hsl(220deg 40% 10% / 0.5),
+    0 10px 20px hsl(220deg 40% 10% / 0.2),
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.15);
 }
 
 .btn-take {
-  background: #27ae60;
-  color: white;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  min-width: 150px;
+  background: radial-gradient(circle at 40% 35%, #45cbb8, #2bb5a0 50%, #1f9585 100%);
+  box-shadow:
+    0 3px 6px hsl(220deg 40% 10% / 0.5),
+    0 6px 12px hsl(220deg 40% 10% / 0.25),
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.15);
 }
 
 .btn-take:hover:not(:disabled) {
-  background: #2ecc71;
-  transform: translateY(-1px);
+  background: radial-gradient(circle at 40% 35%, #55d8c5, #35c9b2 50%, #28a895 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 5px 10px hsl(220deg 40% 10% / 0.5),
+    0 10px 20px hsl(220deg 40% 10% / 0.2),
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.15);
 }
 
+/* Hint text — hidden, reserved for future use */
 .btn-hint {
-  font-size: 0.75rem;
-  opacity: 0.8;
-  font-weight: 400;
+  display: none;
+}
+
+/* ─── Action Buttons (bottom bar) ───────────── */
+.action-buttons-bottom {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 0.75rem 0 1.5rem;
+  position: sticky;
+  bottom: 0.5rem;
+  z-index: 10;
 }
 
 /* ─── Chip Tokens ────────────────────────────── */
@@ -151,15 +213,23 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ffe566, #ffd700 40%, #b8960f 100%);
-  border: 2px solid #b8960f;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  background:
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(180, 120, 60, 0.3) 32%, rgba(180, 120, 60, 0.3) 34%, transparent 36%),
+    radial-gradient(circle at 40% 35%, #ecc088, #d4915e 40%, #a0683a 100%);
+  border: 2.5px dashed rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 2px 4px hsl(220deg 40% 10% / 0.5),
+    0 4px 8px hsl(220deg 40% 10% / 0.2),
+    inset 0 12px 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
 }
 
 .chip-hidden {
-  background: radial-gradient(circle at 40% 35%, #888, #666 40%, #444 100%);
-  border-color: #444;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(68, 68, 68, 0.4) 32%, rgba(68, 68, 68, 0.4) 34%, transparent 36%),
+    radial-gradient(circle at 40% 35%, #888, #666 40%, #444 100%);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .chip-pile {
@@ -195,8 +265,9 @@ body {
 }
 
 .chip-on-card {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  animation: chipArrive 0.35s ease-out;
 }
 
 .chips-on-card-count {
@@ -204,7 +275,7 @@ body {
   z-index: 10;
   font-size: 1rem;
   font-weight: 700;
-  color: #ffd700;
+  color: #e8a862;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   margin-left: 4px;
 }
@@ -221,11 +292,12 @@ body {
   width: 24px;
   height: 24px;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  transform: scale(1.1);
 }
 
 .flying-card {
-  transform: scale(0.9);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
 }
 
 /* ─── Game Board ─────────────────────────────── */
@@ -251,9 +323,13 @@ body {
   flex: 1;
   min-width: 200px;
   max-width: 360px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 0.75rem 1rem;
+  box-shadow: 0 2px 8px hsl(220deg 40% 10% / 0.3);
 }
 
 .opponent-header {
@@ -289,8 +365,8 @@ body {
 }
 
 .action-message {
-  background: rgba(255, 215, 0, 0.15);
-  color: #ffd700;
+  background: rgba(232, 168, 98, 0.15);
+  color: #e8a862;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
   font-size: 0.95rem;
@@ -312,12 +388,6 @@ body {
   font-size: 1.1rem;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
 .waiting {
   color: #888;
   font-size: 0.9rem;
@@ -331,30 +401,47 @@ body {
 }
 
 .player-hand {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1rem;
-}
-
-.hand-info {
+  box-shadow: 0 2px 8px hsl(220deg 40% 10% / 0.3);
+  transition: box-shadow 0.3s ease;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  gap: 1rem;
 }
 
-.score {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ddd;
+.player-hand.your-turn {
+  box-shadow:
+    0 2px 8px hsl(220deg 40% 10% / 0.3),
+    0 0 12px rgba(232, 168, 98, 0.15),
+    inset 0 0 0 1px rgba(232, 168, 98, 0.2);
 }
 
-.hand-cards {
+/* Player 3-column layout */
+.player-chips-area {
+  flex-shrink: 0;
+}
+
+.player-cards-area {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  min-height: 42px;
+  justify-content: center;
+  min-height: 58px;
+}
+
+.player-score-area {
+  flex-shrink: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ddd;
+  white-space: nowrap;
 }
 
 .no-cards {
@@ -370,7 +457,8 @@ body {
 }
 
 .run-grouped {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   padding: 2px;
 }
@@ -381,30 +469,105 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Teko', sans-serif;
   font-weight: 700;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-variant-numeric: tabular-nums;
+  color: #2a2a2a;
+  background-color: #f5f0e8;
+  box-shadow:
+    0 1px 2px hsl(220deg 40% 10% / 0.5),
+    0 4px 8px hsl(220deg 40% 10% / 0.3),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.05);
   transition: transform 0.15s ease;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Paper grain texture on cards */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  border-radius: inherit;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* Card ring (colored circle around number) */
+.card-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid;
+  position: relative;
+  z-index: 1;
+}
+
+.card-value {
+  line-height: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .card-small {
   width: 36px;
   height: 48px;
-  font-size: 0.85rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.card-small .card-ring {
+  width: 28px;
+  height: 28px;
+  border-width: 2.5px;
+}
+
+.card-medium {
+  width: 52px;
+  height: 70px;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: 8px;
+}
+
+.card-medium .card-ring {
+  width: 44px;
+  height: 44px;
+  border-width: 3px;
 }
 
 .card-large {
   width: 90px;
   height: 120px;
-  font-size: 2rem;
+  font-size: 2.8rem;
+  line-height: 1;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 4px hsl(220deg 40% 10% / 0.6),
+    0 8px 16px hsl(220deg 40% 10% / 0.35),
+    0 16px 32px hsl(220deg 40% 10% / 0.15),
+    0 0 20px rgba(232, 168, 98, 0.08),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.05);
+  animation: revealCard 0.3s ease-out;
+}
+
+.card-large .card-ring {
+  width: 70px;
+  height: 70px;
+  border-width: 3.5px;
 }
 
 .card-highlighted {
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+  box-shadow:
+    0 0 12px rgba(232, 168, 98, 0.6),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.05);
 }
 
 /* ─── Game Over ──────────────────────────────── */
@@ -415,9 +578,16 @@ body {
 }
 
 .game-over h1 {
-  font-size: 2.5rem;
-  color: #ffd700;
+  font-family: 'Teko', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1;
+  color: #e8a862;
   margin-bottom: 1rem;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(232, 168, 98, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .winner-banner {
@@ -429,15 +599,15 @@ body {
 }
 
 .you-won {
-  background: rgba(39, 174, 96, 0.3);
-  color: #2ecc71;
-  border: 2px solid #27ae60;
+  background: rgba(43, 181, 160, 0.2);
+  color: #2bb5a0;
+  border: 2px solid #2bb5a0;
 }
 
 .you-lost {
-  background: rgba(192, 57, 43, 0.3);
-  color: #e74c3c;
-  border: 2px solid #c0392b;
+  background: rgba(232, 93, 74, 0.2);
+  color: #e85d4a;
+  border: 2px solid #e85d4a;
 }
 
 .final-scores {
@@ -455,13 +625,13 @@ body {
 }
 
 .score-you {
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: rgba(232, 168, 98, 0.1);
+  border: 1px solid rgba(232, 168, 98, 0.3);
 }
 
 .score-row .rank {
   font-weight: 700;
-  color: #ffd700;
+  color: #e8a862;
   min-width: 2rem;
 }
 
@@ -476,8 +646,8 @@ body {
 
 /* ─── Error ──────────────────────────────────── */
 .error {
-  background: rgba(192, 57, 43, 0.3);
-  color: #e74c3c;
+  background: rgba(232, 93, 74, 0.2);
+  color: #e85d4a;
   padding: 0.75rem 1.25rem;
   border-radius: 8px;
   margin-top: 1rem;
@@ -493,6 +663,29 @@ body {
 @keyframes pulse {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
+}
+
+@keyframes revealCard {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes chipArrive {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes cardJoin {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.4); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes chipCountPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 /* ─── Responsive ─────────────────────────────── */
@@ -513,13 +706,35 @@ body {
   .card-large {
     width: 72px;
     height: 96px;
-    font-size: 1.6rem;
+    font-size: 2.2rem;
+  }
+
+  .card-large .card-ring {
+    width: 56px;
+    height: 56px;
+  }
+
+  .card-medium {
+    width: 44px;
+    height: 58px;
+    font-size: 1.3rem;
+  }
+
+  .card-medium .card-ring {
+    width: 36px;
+    height: 36px;
   }
 
   .card-small {
     width: 30px;
     height: 40px;
-    font-size: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .card-small .card-ring {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
   }
 
   .chip-token {
@@ -527,21 +742,35 @@ body {
     height: 20px;
   }
 
-  .action-buttons {
-    gap: 0.75rem;
+  .btn-pass, .btn-take {
+    width: 64px;
+    height: 64px;
+    font-size: 0.85rem;
   }
 
-  .btn-pass, .btn-take {
-    padding: 0.75rem 1.25rem;
-    font-size: 1rem;
-    min-width: 120px;
+  .action-buttons-bottom {
+    gap: 1rem;
+  }
+
+  .player-hand {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .player-cards-area {
+    justify-content: center;
+  }
+
+  .player-score-area {
+    text-align: center;
   }
 
   .menu h1 {
-    font-size: 2.25rem;
+    font-size: 3.5rem;
   }
 
   .game-over h1 {
-    font-size: 2rem;
+    font-size: 2.75rem;
   }
 }

@@ -119,6 +119,8 @@ export default function App() {
     if (animating || !gameState) return
     setError(null)
 
+    const prevScore = gameState.you.score
+
     // Optimistic animation for the human's action
     setAnimating(true)
     animationRef.current = true
@@ -157,6 +159,18 @@ export default function App() {
         animationRef.current = false
         setAnimating(false)
         return
+      }
+
+      // Show score delta feedback when human takes a card
+      if (action === 'take') {
+        const scoreDelta = data.you.score - prevScore
+        if (scoreDelta === 0) {
+          setMessage('Extends run!')
+        } else {
+          setMessage(`+${scoreDelta} pts`)
+        }
+        // Clear the message after a brief display
+        setTimeout(() => setMessage(''), 1200)
       }
 
       if (data.actionLog.length > 0) {

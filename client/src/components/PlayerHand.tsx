@@ -7,6 +7,7 @@ interface PlayerHandProps {
   score: number
   chipRef: React.Ref<HTMLDivElement>
   cardsRef: React.Ref<HTMLDivElement>
+  isYourTurn?: boolean
 }
 
 function groupIntoRuns(cards: number[]): number[][] {
@@ -23,28 +24,28 @@ function groupIntoRuns(cards: number[]): number[][] {
   return runs
 }
 
-export default function PlayerHand({ cards, chips, score, chipRef, cardsRef }: PlayerHandProps) {
+export default function PlayerHand({ cards, chips, score, chipRef, cardsRef, isYourTurn }: PlayerHandProps) {
   const runs = groupIntoRuns(cards)
 
   return (
-    <div className="player-hand">
-      <div className="hand-info">
-        <div ref={chipRef}>
-          <ChipPile count={chips} />
-        </div>
-        <span className="score">Score: {score}</span>
+    <div className={`player-hand ${isYourTurn ? 'your-turn' : ''}`}>
+      <div className="player-chips-area" ref={chipRef}>
+        <ChipPile count={chips} />
       </div>
-      <div className="hand-cards" ref={cardsRef}>
+      <div className="player-cards-area" ref={cardsRef}>
         {runs.length === 0 && (
           <span className="no-cards">No cards yet</span>
         )}
         {runs.map((run, ri) => (
           <div key={ri} className={`run ${run.length > 1 ? 'run-grouped' : ''}`}>
             {run.map((card) => (
-              <Card key={card} value={card} size="small" />
+              <Card key={card} value={card} size="medium" />
             ))}
           </div>
         ))}
+      </div>
+      <div className="player-score-area">
+        Score: {score}
       </div>
     </div>
   )
